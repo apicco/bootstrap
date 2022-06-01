@@ -39,10 +39,8 @@ def rf( n , c ) :
 def test() :
 	
     c = cdf( 20 , 20 )
-	d = rf( 100 , c )
-	
-	
-	f = plt.figure()
-	plt.hist( d , density = True )
-	plt.plot( c[ 0 ] , pdf( c[ 0 ] , 20 , 20 ) )
-	plt.savefig( "test.pdf" )
+    d = rf( 100 , c )
+    f = plt.figure()
+    plt.hist( d , density = True )
+    plt.plot( c[ 0 ] , pdf( c[ 0 ] , 20 , 20 ) )
+    plt.savefig( "test.pdf" )
