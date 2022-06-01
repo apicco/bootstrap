@@ -36,7 +36,7 @@ def rf( n , c ) :
 
     return x
 
-def test()
+def test() :
 	
     c = cdf( 20 , 20 )
 	d = rf( 100 , c )
