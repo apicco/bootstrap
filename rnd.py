@@ -23,7 +23,7 @@ def cdf( mu , sigma , dx = 0.01 , x0 = 0 , x1 = 2*1E2 ) :
     return [ l , dx * np.cumsum( pdf( l , mu , sigma ) ) ]
 
 # random values from pdf, n values, given the cdf c
-def rpdf( n , c ) :
+def rf( n , c ) :
 
     y = np.random.rand( n )
     x = np.zeros( n )
@@ -39,7 +39,7 @@ def rpdf( n , c ) :
 def test()
 	
     c = cdf( 20 , 20 )
-	d = rpdf( 100 , c )
+	d = rf( 100 , c )
 	
 	
 	f = plt.figure()
