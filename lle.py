@@ -55,10 +55,10 @@ def bootstrap( LL , x0 , d ) :
         Idm = 1/np.array( dm )
         Ids = 1/np.array( ds )
 
-        p_m = Idm / np.sum( Idm )
-        p_s = Ids / np.sum( Ids )
+        p_m = Idm / np.nansum( Idm )
+        p_s = Ids / np.nansum( Ids )
 
-        return - np.sum( p_m * np.log( p_m ) - p_s * np.log( p_s ) )
+        return np.nansum( - p_m * np.log( p_m ) + p_s * np.log( p_s ) )
     # ------------------------------------------------------------------
 
     # order the distance values. Important outliers are in the right tail, 
@@ -80,7 +80,7 @@ def bootstrap( LL , x0 , d ) :
     search = True
     while( search ) :
 
-        # remove  a dd
+        # remove a distance
         dd = dd[ :-1]
         x0 = [ mu[ -1 ][ 0 ] , sigma[ -1 ][ 0 ] ]
         m , s = optim( LL , x0 = x0 , d = dd , verbose = False ) 
