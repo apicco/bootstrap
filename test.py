@@ -3,7 +3,7 @@ from lle import bootstrap , LL , optim
 from matplotlib import pyplot as plt
 import numpy as np
 
-np.random.seed( 2 ) 
+np.random.seed( 5 ) 
 mu0 = 20
 sigma0 = 10
 x0 = [ 18 , 12 ]
@@ -23,15 +23,15 @@ plt.hist( d , density = True  , color = 'red' , alpha = 0.5 , label = 'Contamina
 plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu0 , sigma0 ) , color = 'black' , 
     label = 'True values: $\mu=$' + str( round( mu0 , 2 ) ) + ' nm, $\sigma=$' + str( round( sigma0 , 2 ) ) + ' nm' )
 plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu_true[ 0 ] , sigma_true[ 0 ] ) , color = 'green' ,
-    label = 'Estimate from uncontaminated data:\n$\mu=$' 
+    label = 'Estimate from random data uncontaminated:\n$\mu=$' 
     + str( round( mu_true[ 0 ] , 2 ) ) + '$\pm$' + str( round( mu_true[ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
     + str( round( sigma_true[ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma_true[ 1 ] , 2 ) ) + 'nm' )
 plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_max ][ 0 ] , sigma[ i_max ][ 0 ] ) , color = 'red' ,
-    label = 'Estimate from contaminated data,\nwith bootstrap:\n$\mu=$' 
+    label = 'Estimate from random data, contaminated\nand cleaned with bootstrap:\n$\mu=$' 
     + str( round( mu[ i_max ][ 0 ] , 2 ) ) + '$\pm$' + str( round( mu[ i_max ][ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
     + str( round( sigma[ i_max ][ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma[ i_max ][ 1 ] , 2 ) ) + 'nm' )
 plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_min ][ 0 ] , sigma[ i_min ][ 0 ] ) , color = 'red' , ls = 'dashed' ,
-    label = 'Estimate from contaminated data,\nwithout bootstrap:\n$\mu=$' 
+    label = 'Estimate from random data, contaminated\nand not cleaned with bootstrap:\n$\mu=$' 
     + str( round( mu[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( mu[ i_min ][ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
     + str( round( sigma[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma[ i_min ][ 1 ] , 2 ) ) + 'nm' )
 
