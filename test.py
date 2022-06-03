@@ -3,7 +3,7 @@ from lle import bootstrap , LL , optim
 from matplotlib import pyplot as plt
 import numpy as np
 
-np.random.seed( 1 ) 
+np.random.seed( 2 ) 
 mu0 = 20
 sigma0 = 10
 x0 = [ 18 , 12 ]

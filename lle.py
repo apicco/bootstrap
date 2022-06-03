@@ -76,7 +76,8 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
                 # min LL analysis by focusing only on the LL values past the LL max
                 # thus on those values coming from the tail of the distribution
                 # (i.e. the largest distances)
-    if cutoff != cutoff : cutoff = 2 * len( d ) / 3
+    if cutoff != cutoff : cutoff = 2 * len( d ) / 3 # 5 in the R code, but I think it is safe to assume 
+                                                    # that more than half of the data area good
 
     # order the distance values. Important outliers are in the right tail, 
     # so it is convenient to start removing those
@@ -93,10 +94,6 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
     # start the outliers search
     search = True
     while( search ) :
-        
-        # set the initial conditions for LL and optim
-        # to be the last mu and sigma values
-        x0 = [ mu[ -1 ][ 0 ] , sigma[ -1 ][ 0 ] ]
         
         # the number of distance measurements left
         n = len( dd[ -1 ] )
