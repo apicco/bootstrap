@@ -26,14 +26,14 @@ plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu_true[ 0 ] , sigma_true[ 0 ] ) , color = 'gre
     label = 'Estimate from uncontaminated data:\n$\mu=$' 
     + str( round( mu_true[ 0 ] , 2 ) ) + '$\pm$' + str( round( mu_true[ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
     + str( round( sigma_true[ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma_true[ 1 ] , 2 ) ) + 'nm' )
-plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_min ][ 0 ] , sigma[ i_min ][ 0 ] ) , color = 'red' ,
+plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_max ][ 0 ] , sigma[ i_max ][ 0 ] ) , color = 'red' ,
     label = 'Estimate from contaminated data,\nwith bootstrap:\n$\mu=$' 
-    + str( round( mu[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( mu[ i_min ][ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
-    + str( round( sigma[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma[ i_min ][ 1 ] , 2 ) ) + 'nm' )
-plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_max ][ 0 ] , sigma[ i_max ][ 0 ] ) , color = 'red' , ls = 'dashed' ,
-    label = 'Estimate from contaminated data,\nwithout bootstrap:\n$\mu=$' 
     + str( round( mu[ i_max ][ 0 ] , 2 ) ) + '$\pm$' + str( round( mu[ i_max ][ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
     + str( round( sigma[ i_max ][ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma[ i_max ][ 1 ] , 2 ) ) + 'nm' )
+plt.plot( c[ 0 ] , pdf( c[ 0 ] , mu[ i_min ][ 0 ] , sigma[ i_min ][ 0 ] ) , color = 'red' , ls = 'dashed' ,
+    label = 'Estimate from contaminated data,\nwithout bootstrap:\n$\mu=$' 
+    + str( round( mu[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( mu[ i_min ][ 1 ] , 2 ) ) + 'nm, $\sigma=$' 
+    + str( round( sigma[ i_min ][ 0 ] , 2 ) ) + '$\pm$' + str( round( sigma[ i_min ][ 1 ] , 2 ) ) + 'nm' )
 
 plt.xlabel('$\mu$ (nm)' )
 plt.ylabel( 'Density' )

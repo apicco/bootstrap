@@ -7,6 +7,11 @@ c = cdf( 20 , 10 )
 d = rf( 100 , c )
 
 def LL( x , d ) :
+    # IMPORTANT NOTE: LL is defined as minus the log likelihood because its values
+    # will be optimised through a minimisation process. Hence, the values that maximise
+    # the log likelihood are those that minimise LL. This note will be important
+    # in the bootstrap method, as the outliers rejected are those whore rejection
+    # increases the log likelihood, thus decreases LL
     pp = pdf( d , x[ 0 ] , x[ 1 ] )
     return -np.nansum( np.log( pp ) )
 
@@ -67,8 +72,10 @@ def optim( LL , x0 , d , verbose = False ) :
 
 def bootstrap( LL , x0 , d , cutoff = np.nan ) :
 
-    d.sort()
-    print( d )
+    d.sort()    # sorting of the distances is important, because it will ease the
+                # min LL analysis by focusing only on the LL values past the LL max
+                # thus on those values coming from the tail of the distribution
+                # (i.e. the largest distances)
     if cutoff != cutoff : cutoff = 2 * len( d ) / 3
 
     # order the distance values. Important outliers are in the right tail, 
@@ -94,16 +101,22 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
         # the number of distance measurements left
         n = len( dd[ -1 ] )
         # storage vector for the LL estimates when removing a distance
-        l = np.zeros( n )
-       
+        l = []
+        # storage vector for the distance dataset with each removed distance
         dtmp = []
         for i in range( n ) :
            
             dtmp.append( [ dd[ -1 ][ j ] for j in range( n ) if j != i ] )
-            l[ i ] = LL( x0 , dtmp[ i ] )
+            l.append( LL( x0 , dtmp[ i ] ) )
 
         # keep the d that is 'more likely' to belong to the dataset (i.e. max likelihood )
-        i_sel = l.tolist().index( max( l ) )
+        # NOTE that LL has been defined with a minus for optin to search for a minimum. Thus
+        # here we need to search for a max instead of a minimum, and for a minimum, instead of a max
+        l_max = l.index( max( l ) ) # that is the index of the value most pertinent to the pdf, whose
+                                    # removal maximises the LL ( i.e. minimises the log likelihood)
+        ll = l[ l_max : ]
+        i_sel = l_max + ll.index( min( ll ) )
+
         new_dataset = dtmp[ i_sel ]
         # compute a new optimisation on the dataset without the 'less likely' distance 
         m , s = optim( LL , x0 = x0 , d = new_dataset , verbose = False ) 
