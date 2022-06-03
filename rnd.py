@@ -54,4 +54,4 @@ def rf( n , c , noise = 0 , noise_mean = np.nan , noise_std = np.nan ) :
     # shuffle and return xn so that the noisy 
     # values are not only at the end of the vector
     np.random.shuffle( xn )
-    return x , xn
+    return x , xn.tolist()

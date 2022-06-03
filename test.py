@@ -8,7 +8,7 @@ mu0 = 20
 sigma0 = 10
 x0 = [ 18 , 12 ]
 c = cdf( mu0 , sigma0 )
-# generate random data with and without contamination
+# generate random data without and with contamination
 d0 , d = rf( 100 , c , 20 )
 # compute the estimate and verbose the result of the MLE on the data without contamination
 mu_true , sigma_true = optim( LL , x0 = x0 , d = d0 , verbose = True )

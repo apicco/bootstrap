@@ -7,7 +7,31 @@ c = cdf( 20 , 10 )
 d = rf( 100 , c )
 
 def LL( x , d ) :
-    return -np.sum( np.log( pdf( d , x[ 0 ] , x[ 1 ] ) ) )
+    pp = pdf( d , x[ 0 ] , x[ 1 ] )
+    return -np.nansum( np.log( pp ) )
+
+# define the Shannon entropy scoring function
+def S( mus , sigmas ) :
+
+    N = len( mus )
+    M = len( sigmas )
+
+    # convert list to numpy array
+    mus = np.array( [ mus[ i ][ 0 ] for i in range( N ) ] )
+    sigmas = np.array( [ sigmas[ i ][ 0 ] for i in range( M ) ] ) 
+
+    # conpute the inversion of the deltas. See point 6 in the section
+    # Quantification and Statistical Analysis - Image processing and 
+    # distance measurements, in Picco et al. Cell 2018
+    np.seterr(divide='ignore', invalid='ignore')
+    Im = 1/np.abs( mus[ 1: ] - mus[ :-1 ] )
+    Is = 1/np.abs( sigmas[ 1: ] - sigmas[ :-1 ] )
+
+    p_m = Im / np.nansum( Im )
+    p_s = Is / np.nansum( Is )
+
+    return - p_m * np.log( p_m ) - p_s * np.log( p_s ) 
+
 
 def optim( LL , x0 , d , verbose = False ) :
 
@@ -41,61 +65,59 @@ def optim( LL , x0 , d , verbose = False ) :
 
     return mu , sigma
 
-def bootstrap( LL , x0 , d ) :
+def bootstrap( LL , x0 , d , cutoff = np.nan ) :
 
-    # ------------------------------------------------------------------
-    # define the Shannon entropy scoring function
-    def S( dm , ds ) :
-
-        np.seterr(divide='ignore', invalid='ignore')
-
-        # conpute the inversion of the deltas. See point 6 in the section
-        # Quantification and Statistical Analysis - Image processing and 
-        # distance measurements, in Picco et al. Cell 2018
-        Idm = 1/np.array( dm )
-        Ids = 1/np.array( ds )
-
-        p_m = Idm / np.nansum( Idm )
-        p_s = Ids / np.nansum( Ids )
-
-        return np.nansum( - p_m * np.log( p_m ) + p_s * np.log( p_s ) )
-    # ------------------------------------------------------------------
+    d.sort()
+    print( d )
+    if cutoff != cutoff : cutoff = 2 * len( d ) / 3
 
     # order the distance values. Important outliers are in the right tail, 
     # so it is convenient to start removing those
 
-    dd = np.sort( d ) 
-    m , s = optim( LL , x0 , dd ) 
+    m , s = optim( LL , x0 , d ) 
 
     # storage for the incremental changes in the 
     # estimate of mu (m), sigma (s), and the 
     # Shannon entropy output (sh)
     mu = [ m ]
     sigma =  [ s ]
-    dm = [] # delta mu
-    ds = [] # delta sigma
-    sh = [] # shannon entropy
+    dd = [ d ]
 
     # start the outliers search
     search = True
     while( search ) :
-
-        # remove a distance
-        dd = dd[ :-1]
+        
+        # set the initial conditions for LL and optim
+        # to be the last mu and sigma values
         x0 = [ mu[ -1 ][ 0 ] , sigma[ -1 ][ 0 ] ]
-        m , s = optim( LL , x0 = x0 , d = dd , verbose = False ) 
+        
+        # the number of distance measurements left
+        n = len( dd[ -1 ] )
+        # storage vector for the LL estimates when removing a distance
+        l = np.zeros( n )
+       
+        dtmp = []
+        for i in range( n ) :
+           
+            dtmp.append( [ dd[ -1 ][ j ] for j in range( n ) if j != i ] )
+            l[ i ] = LL( x0 , dtmp[ i ] )
 
-        # compute the deltas
-        dm.append( np.abs( mu[ -1 ][ 0 ] - m[ 0 ] ) )
-        ds.append( np.abs( sigma[ -1 ][ 0 ] - s[ 0 ] ) )
+        # keep the d that is 'more likely' to belong to the dataset (i.e. max likelihood )
+        i_sel = l.tolist().index( max( l ) )
+        new_dataset = dtmp[ i_sel ]
+        # compute a new optimisation on the dataset without the 'less likely' distance 
+        m , s = optim( LL , x0 = x0 , d = new_dataset , verbose = False ) 
+
         # store the mu and sigma values
         mu.append( m )
         sigma.append( s )
-        # compute and store the shannon entropy 
-        sh.append( S( dm , ds ) )
-
-        if len( dd ) < 2 * len( d ) / 3 :
+        dd.append( new_dataset )
+        
+        if len( new_dataset ) < cutoff :
             search = False
+        
+    # compute and store the shannon entropy 
+    sh =  S( mu , sigma ).tolist()
     
     print( '-----BOOTSTRAP-----' )
     print( 'max Sh: ' + str( np.nanmax( sh ) ) )
