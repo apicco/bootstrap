@@ -92,9 +92,11 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
     dd = [ d ]
 
     # start the outliers search
+    m_tmp = x0[ 0 ] # the m and s for the LL to determine which
+    s_tmp = x0[ 1 ] # d is 'more likely' do be rejected
     search = True
     while( search ) :
-        
+
         # the number of distance measurements left
         n = len( dd[ -1 ] )
         # storage vector for the LL estimates when removing a distance
@@ -104,7 +106,7 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
         for i in range( n ) :
            
             dtmp.append( [ dd[ -1 ][ j ] for j in range( n ) if j != i ] )
-            l.append( LL( x0 , dtmp[ i ] ) )
+            l.append( LL( [ m_tmp , s_tmp ] , dtmp[ i ] ) )
 
         # keep the d that is 'more likely' to belong to the dataset (i.e. max likelihood )
         # NOTE that LL has been defined with a minus for optin to search for a minimum. Thus
@@ -125,6 +127,9 @@ def bootstrap( LL , x0 , d , cutoff = np.nan ) :
         
         if len( new_dataset ) < cutoff :
             search = False
+        else :
+            m_tmp = m[ 0 ]
+            s_tmp = s[ 0 ]
         
     # compute and store the shannon entropy 
     sh =  S( mu , sigma ).tolist()
